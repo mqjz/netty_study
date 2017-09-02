@@ -1,4 +1,6 @@
 import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.DirectChannelBufferFactory;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
@@ -21,6 +23,18 @@ public class HelloClient {
     }
 
     private static class HelloClientHandler extends SimpleChannelHandler {
+
+        @Override
+        public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
+            //super.messageReceived(ctx, e);
+            if(e.getMessage() instanceof  ChannelBuffer) {
+                ChannelBuffer buffer = (ChannelBuffer)e.getMessage();
+                byte[] bytes = new byte[buffer.readableBytes()];
+                buffer.getBytes(0, bytes);
+                System.out.println("recv: " + new String(bytes));
+            }
+
+        }
 
         @Override
         public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
